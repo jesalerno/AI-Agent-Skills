@@ -1,6 +1,6 @@
 # AI Coding Agent Skills & Instructions
 
-A curated collection of specification documents that define the operating behavior, coding standards, and definition of done for AI-powered software development agents. These documents are designed to be used as system-level instructions (custom agent modes, skills, or rules) in AI coding assistants such as GitHub Copilot, Cursor, and similar tools.
+A curated collection of specification documents that define the operating behavior, coding standards, and definition of done for AI-powered software development agents. These documents are designed to be used as system-level instructions (custom agent modes, skills, or rules) in AI coding assistants and similar tools.
 
 ## Documents
 
