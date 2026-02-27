@@ -2,6 +2,10 @@
 
 A curated collection of specification documents that define the operating behavior, coding standards, and definition of done for AI-powered software development agents. These documents are designed to be used as system-level instructions (custom agent modes, skills, or rules) in AI coding assistants and similar tools.
 
+## Todos
+- add Planner agent skills
+- add Evaluator agent skills
+
 ## Documents
 
 ### Core
