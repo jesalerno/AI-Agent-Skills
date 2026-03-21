@@ -3,8 +3,8 @@
 
 # Planning Agent Skills — Requirements Analysis and Specification
 
-**Version:** 1.5
-**Revised:** 2026-02-22 (editorial pass: removed redundancies, resolved ambiguities, corrected fabrications)
+**Version:** 1.6
+**Revised:** 2026-03-07 (added accessibility/localization as first-class concerns; added Domain-Driven Design operating principle and question category; added ASPICE PAM 4.0 compliance — `status` and `verification_criterion` on every requirement, Requirements Elicitation Record label for Phase 1 output; expanded NFR checklist with separate Accessibility and Localization rows; new §3.10–3.12, §5.9, §4.8–4.9)
 **Parent document:** Programming Agent Skills (Generalist) v1.2
 **License:** [MIT](LICENSE)
 
@@ -24,6 +24,7 @@ These keywords appear only in normative sections. Informative sections are writt
 
 | Acronym | Expansion |
 |---|---|
+| a11y | Accessibility (numeronym: "a" + 11 letters + "y") |
 | ABAC | Attribute-Based Access Control |
 | ACL | Access Control List |
 | AES-256 | Advanced Encryption Standard, 256-bit key |
@@ -34,11 +35,14 @@ These keywords appear only in normative sections. Informative sections are writt
 | CERT-C | CERT Coding Standard for C (Carnegie Mellon SEI) |
 | CIA | Confidentiality, Integrity, Availability |
 | CORS | Cross-Origin Resource Sharing |
+| BP | Base Practice (ASPICE) |
 | DAL | Design Assurance Level (A–E; DO-178C) |
+| DDD | Domain-Driven Design |
 | DO-178C | Software Considerations in Airborne Systems and Equipment Certification |
 | FedRAMP | Federal Risk and Authorization Management Program |
 | GDPR | General Data Protection Regulation |
 | HIPAA | Health Insurance Portability and Accountability Act |
+| i18n | Internationalization (numeronym: "i" + 18 letters + "n") |
 | IEC | International Electrotechnical Commission |
 | INVEST | Independent, Negotiable, Valuable, Estimable, Small, Testable |
 | ISO | International Organization for Standardization |
@@ -57,6 +61,7 @@ These keywords appear only in normative sections. Informative sections are writt
 | RBAC | Role-Based Access Control |
 | RFC | Request for Comments |
 | RPO | Recovery Point Objective |
+| RTL | Right-to-Left (text direction)
 | RTO | Recovery Time Objective |
 | SAML | Security Assertion Markup Language |
 | SIL | Safety Integrity Level (1–4; IEC 61508) |
@@ -67,6 +72,7 @@ These keywords appear only in normative sections. Informative sections are writt
 | TLS | Transport Layer Security |
 | WCAG | Web Content Accessibility Guidelines |
 | WCET | Worst-Case Execution Time |
+| WP | Work Product (ASPICE)
 
 ---
 
@@ -107,7 +113,17 @@ This document does not cover implementation, code generation, infrastructure pro
 
 **Stakeholder:** Any person, team, or organization that has an interest in, or is affected by, the system. Stakeholders are broader than users — they include sponsors, operators, regulators, third-party integrators, and support teams. Stakeholders and their key interests are captured in the `stakeholder_register`.
 
+**Verification criterion:** A specific, measurable, observable condition that proves a particular requirement is satisfied. Distinct from `verification_method` (which names the technique). A good criterion names the input, the condition, and the measurable outcome — e.g., "Under a sustained load of 1,000 req/s, p95 end-to-end latency from request receipt to response dispatch is ≤ 200 ms, as measured over a 10-minute run." Required by ASPICE SWE.1 BP3 and SYS.2 BP3.
+
 **Verification method:** The technique used to confirm that a requirement has been met — one of: `inspection` (review of a document or artefact), `analysis` (calculation, simulation, or model checking), `demonstration` (showing correct behaviour without formal measurement), or `test` (executing the system with defined inputs and measuring outputs against expected results).
+
+**Bounded context:** In Domain-Driven Design, a bounded context is an explicit boundary within which a particular domain model applies. Each bounded context has its own ubiquitous language, its own domain model, and its own lifecycle. Bounded contexts are the primary unit of alignment between Epics and business capabilities in DDD-aligned projects.
+
+**Ubiquitous language:** In Domain-Driven Design, the shared vocabulary that domain experts and developers use consistently — in conversations, models, requirements, code, and tests. The same term must refer to the same concept everywhere; synonyms create ambiguity and model drift.
+
+**Domain event:** A named record of something significant that happened in the domain — e.g., `OrderPlaced`, `PaymentFailed`, `InventoryDepleted`. Domain events are facts, stated in the past tense, and often trigger behaviour in other bounded contexts.
+
+**Requirements status:** The lifecycle stage of a requirement in the ASPICE requirements management process. Valid values: `proposed` (elicited but not yet reviewed), `under_discussion` (review raised questions), `agreed` (stakeholders confirmed), `rejected` (determined out of scope or infeasible), `baseline` (agreed and locked in an approved release). All requirements start as `proposed`.
 
 **Bidirectional traceability:** The property that every requirement can be traced forward to the Story that implements it (forward trace: REQ → Story, used to verify that every requirement is covered), and every Story can be traced backward to the requirement that justifies it (backward trace: Story → REQ, used to verify that every Story exists for a reason). Neither direction alone is sufficient.
 
@@ -218,6 +234,32 @@ All Operating Principles from the generalist document (Section 3) apply. The fol
 - Before applying any change requested by the user, the agent MUST perform and report a change impact analysis: which requirements, Stories, Tasks, and NFRs are affected, and whether the change introduces new risks or invalidates existing traceability links.
 - The agent MUST NOT apply a change that invalidates forward or backward closure without resolving the broken links in the same response.
 
+### 3.10 Accessibility and Localization
+
+- The agent MUST treat accessibility and localization as first-class NFR concerns, not as aesthetic or optional features.
+- Unless the system is exclusively internal tooling with no end users, the agent MUST ask about the required WCAG conformance level and the supported locales/languages in the Question Phase (see §5.9).
+- The agent MUST generate an Accessibility NFR and a Localization NFR in every specification for user-facing systems. These MUST appear in the `nfrs` array with measurable acceptance criteria. Absence of these NFRs MUST be justified explicitly in the `not_included` field — the agent MUST NOT silently omit them.
+- Accessibility and localization requirements MUST be treated the same as absent security requirements: if the source document does not address them, the agent MUST ask, not skip.
+- Minimum Accessibility NFR: "All user-facing screens conform to WCAG 2.1 Level AA, verified by automated scan (axe-core or equivalent) plus manual testing with at least one screen reader."
+- Minimum Localization NFR: "All user-facing strings are externalized to resource files. The application renders correctly in all supported locales, including locale-appropriate date/time/currency/number formatting and RTL layout where applicable."
+
+### 3.11 Domain-Driven Design
+
+- When the system involves multiple distinct business capabilities, complex or frequently-changing business rules, or collaborative ownership across teams, the agent SHOULD apply Domain-Driven Design.
+- When DDD applies, the agent MUST: establish and record a ubiquitous language glossary in Phase 1; identify bounded contexts; align Epics with bounded contexts in Phase 2 (one Epic per bounded context is the starting point); document aggregates and domain events in `architecture_notes`; use domain vocabulary consistently in all Story and Task titles.
+- The agent MUST ask whether DDD should be applied when the domain is non-trivial (see §5.9 Domain Model questions).
+- The agent MUST NOT apply DDD vocabulary if the domain model has not been agreed with the user — silently inventing bounded contexts or domain events is a form of requirement invention (§3.2).
+
+### 3.12 ASPICE PAM 4.0 Compliance
+
+- Every specification produced MUST be structured to satisfy the base practices of ASPICE PAM 4.0 processes SYS.1 (Requirements Elicitation), SYS.2 (System Requirements Analysis), and SWE.1 (Software Requirements Analysis).
+- The Phase 1 Q&A exchange constitutes ASPICE Work Product 13-52 (Communications Evidence) and MUST be labelled as such in the Phase 1 output (see §11.1).
+- Every entry in `requirements_register` MUST carry:
+  - A `status` field (WP 17-54; SYS.1 BP4) — start as `"proposed"`, update to `"agreed"` when stakeholders confirm; see §2 Requirements status for the full lifecycle.
+  - A `verification_criterion` field (SWE.1 BP3 / SYS.2 BP3) — a specific, measurable, observable condition proving the requirement is satisfied; see §2 Verification criterion.
+- The `spec_revision` field marks the candidate requirements baseline; a formal baseline requires out-of-tool stakeholder sign-off, which MUST be recorded as an assumption.
+- Bidirectional traceability in `traceability_matrix` satisfies SYS.2 BP5 and SWE.1 BP5.
+
 ---
 
 ## 4. Definition of Done (Normative)
@@ -263,6 +305,8 @@ The specification is complete only when all criteria below are met.
 
 - Every requirement in the register has passed all quality criteria in §3.8.
 - Every requirement has an assigned `verification_method`.
+- Every requirement has a `verification_criterion` that is specific, measurable, observable, and unambiguous (§3.12, SWE.1 BP3 / SYS.2 BP3).
+- Every requirement has a `status` field set (§3.12, SYS.1 BP4). Minimum value on initial delivery is `"proposed"`.
 - No two requirements in the register are in unresolved conflict.
 
 ### 4.7 Risk Coverage
@@ -271,6 +315,20 @@ The specification is complete only when all criteria below are met.
 - Every threat in the `threat_model` has a `likelihood` and `impact` rating, and a computed `risk_level`.
 - Every risk in the `risk_register` has a stated mitigation or an explicit acceptance rationale.
 - If a safety integrity level (ASIL, SIL, or DAL) has been identified, at least one NFR captures the classification and its verification obligations.
+
+### 4.8 Accessibility and Localization
+
+- For every user-facing system: the `nfrs` array contains at least one Accessibility NFR with a WCAG conformance level and a measurable acceptance criterion (§3.10).
+- For every system supporting more than one locale or expected to do so within the planning horizon: the `nfrs` array contains at least one Localization NFR with the supported locales, RTL scope, and translation workflow (§3.10).
+- If either NFR is omitted, the `not_included` field contains an explicit justification.
+
+### 4.9 ASPICE Compliance
+
+- The Phase 1 output is labelled "Requirements Elicitation Record (ASPICE WP 13-52)" (§11.1).
+- Every `requirements_register` entry has both a `status` field and a `verification_criterion` field (§3.12).
+- `traceability_matrix` is present and `coverage_gaps` is empty (SYS.2 BP5 / SWE.1 BP5).
+- `spec_revision` is set, marking the candidate requirements baseline.
+- An `assumptions` entry records that a formal baseline requires out-of-tool stakeholder sign-off.
 
 ---
 
@@ -293,7 +351,6 @@ In the Question Phase, the agent MUST organize questions under the following cat
 - Who are the distinct user roles or personas? What are their key differences in permissions and workflows?
 - Are there non-human actors (other systems, scheduled jobs, external APIs) that interact with this system?
 - What is the expected number of concurrent users or requests at peak load?
-- Are there users with accessibility requirements (WCAG compliance level)?
 - Which stakeholders must review and approve the specification before implementation begins?
 
 ### 5.3 Security (Always Asked)
@@ -348,6 +405,28 @@ The agent MUST ask all of the following security questions regardless of whether
 - What are the top technical risks that could prevent delivery? (Third-party dependencies, novel technology, performance unknowns?)
 - What are the top organizational or project risks? (Key-person dependency, unclear ownership, conflicting stakeholder priorities?)
 - Are there known external events (regulatory deadlines, third-party API changes, hardware availability) that constrain the schedule?
+
+### 5.9 Accessibility and Localization *(ask unless system is exclusively internal tooling with no end users)*
+
+The agent MUST ask all of the following questions for every user-facing system. These questions are NOT optional — treat their absence the same as absent security questions.
+
+- What accessibility conformance level is required? (WCAG 2.1 A, AA, or AAA; EN 301 549; Section 508?)
+- Which assistive technologies must the system be tested against? (Screen readers such as NVDA, VoiceOver, TalkBack; switch access; voice control?)
+- Are there users with specific accessibility needs that should drive design decisions (e.g., low vision, colour blindness, motor impairment, cognitive load)?
+- What languages and locales must the system support at launch? Which are planned for future phases?
+- Are there right-to-left (RTL) script requirements? (Arabic, Hebrew, Persian, Urdu?)
+- Are there locale-specific formatting requirements? (Date, time, currency, numbers, addresses, telephone numbers?)
+- Must all content — including error messages, notifications, help text, and legal text — be translated, or only the primary UI?
+- Is there a content management or translation workflow (developer-owned string files, CMS, external translation service)?
+
+### 5.10 Domain Model *(ask when system involves distinct business capabilities or complex business rules)*
+
+- Are there existing domain models, entity-relationship diagrams, or business glossaries that define the core concepts?
+- Should Domain-Driven Design be applied? If so, have bounded contexts already been identified?
+- What are the core domain entities and the shared vocabulary used to describe them? (Terms developers use must match terms domain experts use — "Order", "Invoice", "Customer" — not technical synonyms.)
+- Are there domain events the system must emit or react to? (e.g., "OrderPlaced", "PaymentFailed", "InventoryDepleted")
+- Which parts of the domain are most complex or subject to frequent business rule changes? (These are the "core domain" — where DDD investment pays off most.)
+- Which bounded contexts will be owned by separate teams or eventually split into separate services?
 
 ---
 
@@ -442,7 +521,9 @@ The agent MUST produce output that conforms to the following schema. All fields 
       "stakeholder_source": "SH-xxx",      // optional — SH-ID of the stakeholder who raised this requirement
       "criticality": "safety_critical | mission_critical | business_critical | standard",  // required
       "safety_integrity_level": "string",  // optional — ASIL-A/B/C/D, SIL-1/2/3/4, DAL-A/B/C/D/E, or null
+      "status": "proposed | under_discussion | agreed | rejected | baseline",  // required (ASPICE WP 17-54 / SYS.1 BP4); default "proposed"
       "verification_method": "test | demonstration | analysis | inspection",  // required
+      "verification_criterion": "string",  // required (ASPICE SWE.1 BP3 / SYS.2 BP3) — specific, measurable, observable condition proving this requirement is satisfied
       "implemented_by": ["STORY-xxx"],     // required — forward trace; MUST NOT be empty in a complete spec
       "change_history": [                  // required — may be empty on initial delivery
         {
@@ -630,7 +711,7 @@ The agent MUST create a dedicated security-focused Story (or add security-typed 
 
 ## 9. NFR Checklist (Normative)
 
-The agent MUST evaluate the source document against every category below. For any category not addressed in the source document, the agent MUST generate a question in §5.4 or record an open question.
+The agent MUST evaluate the source document against every category below. For any category not addressed in the source document, the agent MUST generate a question in §5 or record an open question.
 
 | Category | Key questions to assess |
 |---|---|
@@ -645,9 +726,19 @@ The agent MUST evaluate the source document against every category below. For an
 | **Disaster Recovery** | RTO (max downtime), RPO (max data loss), backup frequency and retention |
 | **Maintainability** | Code coverage minimums, documentation standards, dependency update cadence, named coding standards that drive review and static analysis obligations |
 | **Observability** | Logging format, metrics, tracing, alerting thresholds |
-| **Usability** | Accessibility standard (WCAG 2.1 AA), localization/i18n, browser/device support |
+| **Accessibility** | WCAG 2.1 conformance level (A/AA/AAA), EN 301 549, or Section 508. Which surfaces (web, mobile, desktop)? Which assistive technologies must be tested (screen readers, switch access, voice control)? Who performs testing and when? |
+| **Localization** | Which languages/locales at launch and in future phases? RTL support needed? Locale-specific formatting (date, time, currency, numbers, addresses)? Translation workflow (developer-owned strings vs. CMS vs. external service)? |
 | **Portability** | Deployment target constraints, containerization, cloud-vendor independence |
 | **Data Retention** | How long data must be kept, when and how it must be deleted (right to erasure) |
+
+### 9.1 Default NFRs for user-facing systems
+
+The agent MUST include the following NFRs in every specification for user-facing systems unless the user has explicitly stated the NFR does not apply and provided a reason. Absence MUST be justified in the `not_included` field — NOT silently omitted.
+
+| NFR | Minimum acceptance criterion |
+|---|---|
+| Accessibility | All user-facing screens conform to WCAG 2.1 Level AA. Verified by automated scan (axe-core or equivalent) plus manual testing with at least one screen reader (e.g., NVDA, VoiceOver, TalkBack). Zero critical or serious axe violations in CI pipeline. |
+| Localization | All user-facing strings are externalized to resource files. The application renders correctly in all supported locales, including locale-appropriate date/time/currency/number formatting. RTL layout is correct where applicable. No hard-coded locale-specific strings in the codebase. |
 
 ---
 
@@ -664,13 +755,13 @@ The agent MUST evaluate the source document against every category below. For an
 
 5. **Incorporate answers** — integrate all user responses. Update gap list. Record unresolved items as `open_questions`.
 6. **Identify stakeholders** — populate the `stakeholder_register` from the source document and user answers. Assign `SH-NNN` IDs. Mark stakeholders who must review the spec.
-7. **Build requirements register** — extract and number every requirement, constraint, and assumption from the source document into `requirements_register`. Assign `REQ-NNN` IDs. Preserve source text verbatim. For each entry: assign `rationale`, `criticality`, `verification_method`, and `stakeholder_source` where known. Set `safety_integrity_level` on any safety-critical requirement. Register source-document NFRs with `type: non_functional` and create corresponding `nfrs` array entries per §3.4.
-8. **Quality-check requirements** — evaluate each registered requirement against the §3.8 quality criteria (unambiguous, verifiable, feasible, consistent, atomic). Any failing requirement becomes an `open_question` with `blocking: true`. Resolve compound requirements by splitting them before proceeding.
+7. **Build requirements register** — extract and number every requirement, constraint, and assumption from the source document into `requirements_register`. Assign `REQ-NNN` IDs. Preserve source text verbatim. For each entry: assign `rationale`, `criticality`, `verification_method`, `type`, and `stakeholder_source` where known. Set `safety_integrity_level` on any safety-critical requirement. Register source-document NFRs with `type: non_functional` and create corresponding `nfrs` array entries per §3.4. **ASPICE mandatory fields (§3.12):** assign `status: "proposed"` (update to `"agreed"` only when stakeholder confirmation was explicit in Phase 1 answers) and write a `verification_criterion` — a specific, measurable, observable condition proving the requirement is satisfied. Record an assumption that a formal requirements baseline requires stakeholder sign-off outside this tool.
+8. **Quality-check requirements** (SYS.2 BP3 / SWE.1 BP3) — evaluate each registered requirement against the §3.8 quality criteria (unambiguous, verifiable, feasible, consistent, atomic). Any failing requirement becomes an `open_question` with `blocking: true`. Resolve compound requirements by splitting them before proceeding. Also verify that every `verification_criterion` is observable, measurable, and unambiguous — flag any that are vague as blocking open questions.
 9. **Build risk register** — identify technical, organizational, schedule, and external risks. For each: assign likelihood, impact, and derived `risk_level`. State a mitigation or explicit acceptance rationale. Flag any risks that directly threaten a registered requirement.
-10. **Draft technical approach** — populate `technical_approach`: summarize the high-level architecture, document key technology decisions with their rationale and trade-offs, and note any significant integration patterns or component boundaries. Populate `success_criteria` with observable business/user outcomes from the source document and user answers. Populate `not_included` with any items explicitly declared out of scope.
-11. **Draft NFRs** — generate the `nfrs` array. Check every category in the §9 checklist. Write measurable acceptance criteria for each. Assign priorities. If a Safety or Timing/Real-time NFR is present, ensure at least one Task captures the associated verification obligation (formal analysis, WCET measurement, or IV&V review).
+10. **Draft technical approach** — populate `technical_approach`: summarize the high-level architecture, document key technology decisions with their rationale and trade-offs, and note any significant integration patterns or component boundaries. Populate `success_criteria` with observable business/user outcomes from the source document and user answers. Populate `not_included` with any items explicitly declared out of scope. **If DDD applies (§3.11):** document in `architecture_notes` — the bounded context list; ubiquitous language glossary for each context; core aggregates with their aggregate roots; domain events and their cross-context flows; context map showing inter-context relationships (Shared Kernel, Customer/Supplier, Anti-Corruption Layer, etc.).
+11. **Draft NFRs** — generate the `nfrs` array. Check every category in the §9 checklist. Write measurable acceptance criteria for each. Assign priorities. If a Safety or Timing/Real-time NFR is present, ensure at least one Task captures the associated verification obligation (formal analysis, WCET measurement, or IV&V review). **Mandatory for user-facing systems (§3.10, §9.1):** include an Accessibility NFR (minimum WCAG 2.1 AA with automated scan + screen reader testing) and a Localization NFR (string externalization, locale-correct rendering, RTL scope). If either is genuinely inapplicable, record the justification in `not_included`.
 12. **Run STRIDE analysis** — produce the `threat_model`. For each threat, assign likelihood and impact and compute risk level. Create security Tasks for each identified threat. Record task IDs in `mitigated_by`.
-13. **Decompose to Epics** — identify the major capability areas. Assign MoSCoW priorities. Consider the Foundation → Core Functionality → Polish & Deploy sequencing pattern (see §6.1). Populate `story_ids` as Stories are created.
+13. **Decompose to Epics** — identify the major capability areas. Assign MoSCoW priorities. Consider the Foundation → Core Functionality → Polish & Deploy sequencing pattern (see §6.1). Populate `story_ids` as Stories are created. **If DDD applies (§3.11):** align Epics with bounded contexts — one Epic per bounded context is the starting point; this keeps domain logic cohesive and makes future service extraction straightforward. Use domain vocabulary from the ubiquitous language glossary in all Epic and Story titles.
 14. **Decompose to Stories** — break each Epic into Stories. Populate `epic_ref` on each Story. Validate against INVEST. Write acceptance criteria in Given/When/Then form. Set `source_refs` to the implementing `REQ-NNN` IDs.
 15. **Decompose to Tasks** — break each Story into typed Tasks. Populate `story_ref` on each Task. Assign `complexity` and Fibonacci estimates. Resolve dependencies. Ensure every Story has at least one `test`-typed Task, and every security-touching Story has at least one `security`-typed Task.
 16. **Close forward traces** — for every `REQ-NNN` in the register, populate `implemented_by` from the Stories whose `source_refs` include it. For every NFR, populate `implemented_by` from the Stories whose `nfr_refs` include it.
@@ -691,7 +782,9 @@ The agent MUST evaluate the source document against every category below. For an
 ### 11.1 Question Phase Output
 
 ```
-## Requirements Summary
+## Requirements Elicitation Record (ASPICE WP 13-52)
+
+### Requirements Summary
 
 [3–5 sentence restatement of the source document]
 
@@ -708,6 +801,9 @@ The agent MUST evaluate the source document against every category below. For an
 ### Stakeholders, Users, and Actors
 ...
 
+### Accessibility and Localization *(omit only for exclusively internal systems with no end users)*
+...
+
 ### Security *(always present)*
 ...
 
@@ -718,6 +814,9 @@ The agent MUST evaluate the source document against every category below. For an
 ...
 
 ### Constraints and Assumptions
+...
+
+### Domain Model *(include when system has distinct business capabilities or complex rules)*
 ...
 
 ### Verification and Quality
@@ -748,6 +847,8 @@ Please answer the questions above. I will produce the full specification JSON on
 | Not-included items declared | N |
 | Key technical decisions documented | N |
 | Requirements registered | N |
+| — with status field (ASPICE WP 17-54) | N |
+| — with verification_criterion (ASPICE SWE.1 BP3) | N |
 | Requirements fully traced (forward) | N |
 | Requirements with no Story (coverage gap) | N |
 | Requirements failing quality check | N |
@@ -773,9 +874,11 @@ Please answer the questions above. I will produce the full specification JSON on
 | Stakeholders requiring spec review | N |
 | Open questions | N |
 
-**Traceability status:** COMPLETE / INCOMPLETE (list coverage gaps if incomplete)  
-**Must-have Stories:** N  
+**Traceability status:** COMPLETE / INCOMPLETE (list coverage gaps if incomplete)
+**Must-have Stories:** N
 **Open questions blocking decomposition:** [list or "none"]
+**ASPICE WP 13-52 (elicitation record):** present in Phase 1 output
+**ASPICE requirements baseline:** candidate (spec_revision N.N.N — formal baseline requires stakeholder sign-off)
 ```
 
 ---
@@ -792,11 +895,12 @@ Please answer the questions above. I will produce the full specification JSON on
 | [agilealliance.org/glossary/invest](https://www.agilealliance.org/glossary/invest/) | INVEST Story criteria |
 | [iso.org/standard/62085.html](https://www.iso.org/standard/62085.html) | ISO 9001:2015 — Quality management; basis for stakeholder register, risk register, requirements quality criteria, change management, and design verification obligations in §3.8, §3.9, §4.6, §4.7, §5.7 |
 | [iso.org/standard/82875.html](https://www.iso.org/standard/82875.html) | ISO/IEC 27001:2022 — Information security management; basis for risk-rated threat model, security NFRs, and secure development lifecycle questions in §8 and §5.3 |
-| [automotivespice.com](https://www.automotivespice.com) | Automotive SPICE (ASPICE) — software process assessment; basis for requirement attributes (`rationale`, `verification_method`, `criticality`), consistency checking, and verification strategy questions in §3.8, §5.7 |
+| [automotivespice.com](https://www.automotivespice.com) | Automotive SPICE (ASPICE) PAM 4.0 — software process assessment; basis for requirement attributes (`status`, `verification_criterion`, `rationale`, `verification_method`, `criticality`), Communications Evidence (WP 13-52), requirements lifecycle, bidirectional traceability (SYS.2 BP5 / SWE.1 BP5), and §3.12, §4.9 |
+| [w3.org/WAI/WCAG21](https://www.w3.org/WAI/WCAG21/quickref/) | WCAG 2.1 — Web Content Accessibility Guidelines; basis for Accessibility NFR conformance levels, testing approach, and assistive technology requirements in §3.10, §5.9, §9.1 |
+| [domainlanguage.com](https://www.domainlanguage.com) | Domain-Driven Design (Evans, 2003) — basis for bounded contexts, ubiquitous language, aggregates, domain events, and context map concepts in §3.11, §5.10 |
 | [autosar.org](https://www.autosar.org) | AUTOSAR — automotive software architecture standard; basis for Safety (Functional) and Timing / Real-time NFR categories in §9, and safety integrity level attributes in §7 |
 | [misra.org.uk](https://misra.org.uk) | MISRA — coding guidelines for safety-critical software (C, C++); basis for named standards constraint questions in §5.6 and the `Named standard` definition in §2 |
 | [iso.org/standard/43464.html](https://www.iso.org/standard/43464.html) | ISO 26262 — functional safety for road vehicles; ASIL classification referenced in §9 Safety NFR category and §5.6 |
 | [gdpr-info.eu](https://gdpr-info.eu) | GDPR compliance reference |
 | [hhs.gov/hipaa](https://www.hhs.gov/hipaa/index.html) | HIPAA compliance reference |
 | [pcisecuritystandards.org](https://www.pcisecuritystandards.org) | PCI-DSS compliance reference |
-| [w3.org/TR/WCAG21](https://www.w3.org/TR/WCAG21/) | Accessibility standard |

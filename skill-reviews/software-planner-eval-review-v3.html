@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Software Planner — Eval Review v3 (ASPICE)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: 'Lora', Georgia, serif; max-width: 1100px; margin: 0 auto; padding: 28px 20px; background: #faf9f5; color: #141413; }
+    h1 { font-family: 'Poppins', sans-serif; font-size: 1.6rem; margin-bottom: 4px; }
+    .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 24px; }
+    .history-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #999; margin-bottom: 6px; font-family: 'Poppins', sans-serif; }
+
+    /* ── Iteration cards ── */
+    .iter-row { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+    .iter-card { background: white; border: 1px solid #e8e6dc; border-radius: 10px; padding: 18px 22px; flex: 1 1 220px; }
+    .iter-card h3 { font-family: 'Poppins', sans-serif; font-size: 0.85rem; font-weight: 600; margin: 0 0 10px; color: #555; text-transform: uppercase; letter-spacing: 0.04em; }
+    .metric { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+    .metric-label { font-size: 0.85rem; color: #666; }
+    .metric-value { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1.15rem; }
+    .green { color: #4a7c3f; }
+    .red { color: #b05040; }
+    .delta-pill { display: inline-block; background: #e8f5e0; color: #3a6e30; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.9rem; padding: 4px 12px; border-radius: 20px; margin-top: 4px; }
+
+    /* ── Per-eval table ── */
+    .eval-section { margin-bottom: 32px; }
+    .eval-section h2 { font-family: 'Poppins', sans-serif; font-size: 1.05rem; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+    .eval-badge { font-size: 0.75rem; font-weight: 500; padding: 3px 9px; border-radius: 12px; background: #e8e6dc; color: #555; }
+    table { width: 100%; border-collapse: collapse; background: white; border: 1px solid #e8e6dc; border-radius: 8px; overflow: hidden; font-size: 0.84rem; margin-bottom: 8px; }
+    thead th { background: #f4f2ec; font-family: 'Poppins', sans-serif; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; text-align: left; border-bottom: 1px solid #e8e6dc; color: #555; }
+    tbody td { padding: 7px 12px; border-bottom: 1px solid #f0ede4; vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #faf8f3; }
+    .pass { color: #4a7c3f; font-weight: 600; font-size: 1.05rem; }
+    .fail { color: #b05040; font-weight: 600; font-size: 1.05rem; }
+    .score-cell { font-family: 'Poppins', sans-serif; font-weight: 600; }
+    .score-100 { color: #4a7c3f; }
+    .score-mid { color: #8a6e00; }
+    .score-low { color: #b05040; }
+    .aspice-tag { display: inline-block; background: #e8f0fb; color: #2c5282; font-family: 'Poppins', sans-serif; font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin-left: 4px; vertical-align: middle; }
+
+    /* ── Comparison table ── */
+    .comparison-table th:nth-child(2), .comparison-table td:nth-child(2) { background: #f0fbe8; }
+    .comparison-table th:nth-child(3), .comparison-table td:nth-child(3) { background: #fdf0ee; }
+
+    /* ── Progress bar ── */
+    .bar-bg { background: #ede9de; border-radius: 4px; height: 8px; width: 100px; display: inline-block; vertical-align: middle; margin-left: 8px; }
+    .bar-fill { height: 8px; border-radius: 4px; }
+
+    .footnote { font-size: 0.78rem; color: #999; margin-top: 6px; }
+    .section-divider { border: none; border-top: 1px solid #e8e6dc; margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<h1>Software Planner — Eval Review</h1>
+<p class="subtitle">Iteration 3 · ASPICE PAM 4.0 (SYS.1, SYS.2, SWE.1) pass · March 2026</p>
+
+<!-- ── Summary cards ── -->
+<div class="history-label">Iteration 3 results</div>
+<div class="iter-row">
+  <div class="iter-card">
+    <h3>With Skill</h3>
+    <div class="metric"><span class="metric-label">Mean pass rate</span><span class="metric-value green">100.0%</span></div>
+    <div class="metric"><span class="metric-label">task-mgmt-app</span><span class="metric-value green">14/14</span></div>
+    <div class="metric"><span class="metric-label">banking-api</span><span class="metric-value green">14/14</span></div>
+    <div class="metric"><span class="metric-label">iot-pipeline</span><span class="metric-value green">12/12</span></div>
+    <div class="metric"><span class="metric-label">restaurant-ordering</span><span class="metric-value green">16/16</span></div>
+  </div>
+  <div class="iter-card">
+    <h3>Without Skill</h3>
+    <div class="metric"><span class="metric-label">Mean pass rate</span><span class="metric-value red">15.8%</span></div>
+    <div class="metric"><span class="metric-label">task-mgmt-app</span><span class="metric-value red">1/14</span></div>
+    <div class="metric"><span class="metric-label">banking-api</span><span class="metric-value red">2/14</span></div>
+    <div class="metric"><span class="metric-label">iot-pipeline</span><span class="metric-value red">2/12</span></div>
+    <div class="metric"><span class="metric-label">restaurant-ordering</span><span class="metric-value red">4/16</span></div>
+  </div>
+  <div class="iter-card">
+    <h3>Improvement</h3>
+    <div class="metric"><span class="metric-label">Skill lift (delta)</span><span class="metric-value green">+84.2pp</span></div>
+    <div style="margin-top: 10px;"><span class="delta-pill">+84.2pp over baseline</span></div>
+    <div class="footnote" style="margin-top:10px;">New in v3: ASPICE SYS.1/SYS.2/SWE.1 assertions — <code>verification_criterion</code>, requirement <code>status</code>, and WP 13-52 elicitation record label.</div>
+  </div>
+</div>
+
+<!-- ── Iteration comparison ── -->
+<div class="history-label">Progress across iterations</div>
+<table class="comparison-table" style="margin-bottom:28px;">
+  <thead>
+    <tr>
+      <th>Iteration</th>
+      <th>With Skill (mean)</th>
+      <th>Without Skill (mean)</th>
+      <th>Delta</th>
+      <th>Key additions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Iteration 1</td>
+      <td class="score-cell score-100">96.7%</td>
+      <td class="score-cell score-low">17.7%</td>
+      <td class="score-cell green">+79.0pp</td>
+      <td>Core skill: two-phase workflow, STRIDE, traceability, JSON schema</td>
+    </tr>
+    <tr>
+      <td>Iteration 2</td>
+      <td class="score-cell score-100">95.0%</td>
+      <td class="score-cell score-low">31.2%</td>
+      <td class="score-cell green">+63.8pp</td>
+      <td>Accessibility &amp; localization NFRs, DDD bounded contexts, restaurant eval</td>
+    </tr>
+    <tr style="font-weight:600;">
+      <td>Iteration 3 ✓</td>
+      <td class="score-cell score-100">100.0%</td>
+      <td class="score-cell score-low">15.8%</td>
+      <td class="score-cell green">+84.2pp</td>
+      <td>ASPICE PAM 4.0 SYS.1/SYS.2/SWE.1: <code>status</code>, <code>verification_criterion</code>, WP 13-52</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr class="section-divider">
+
+<!-- ── Per-eval detail ── -->
+<div class="history-label">Assertion detail by eval</div>
+
+<!-- task-mgmt-app -->
+<div class="eval-section">
+  <h2>task-mgmt-app <span class="eval-badge">14 assertions</span></h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Assertion</th><th>With Skill</th><th>Without Skill</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>a1</td><td>Phase 1 present (Requirements Elicitation Record)</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a2</td><td>Security questions present</td><td class="pass">✓</td><td class="pass">✓</td></tr>
+      <tr><td>a3</td><td>Accessibility questions asked (Phase 1)</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a4</td><td>Localization/i18n questions asked (Phase 1)</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a5</td><td>JSON spec produced (spec_version)</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a6</td><td>requirements_register present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a7</td><td>STRIDE threat model present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a8</td><td>traceability_matrix present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a9</td><td>NFRs array present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a10</td><td>Accessibility NFR (WCAG) captured</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a11</td><td>Summary table present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a12</td><td><strong>ASPICE:</strong> requirement status field present <span class="aspice-tag">SYS.1 BP4</span></td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a13</td><td><strong>ASPICE:</strong> verification_criterion field present <span class="aspice-tag">SWE.1 BP3</span></td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a14</td><td><strong>ASPICE:</strong> WP 13-52 elicitation record label <span class="aspice-tag">WP 13-52</span></td><td class="pass">✓</td><td class="fail">✗</td></tr>
+    </tbody>
+  </table>
+  <div class="footnote">With skill: 14/14 (100%) · Without skill: 1/14 (7.1%)</div>
+</div>
+
+<!-- banking-api -->
+<div class="eval-section">
+  <h2>banking-api <span class="eval-badge">14 assertions</span></h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Assertion</th><th>With Skill</th><th>Without Skill</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>a1</td><td>Phase 1 present (Clarification Questions)</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a2</td><td>Security questions present</td><td class="pass">✓</td><td class="pass">✓</td></tr>
+      <tr><td>a3</td><td>Accessibility questions asked</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a4</td><td>JSON spec produced (spec_version)</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a5</td><td>PCI-DSS referenced</td><td class="pass">✓</td><td class="pass">✓</td></tr>
+      <tr><td>a6</td><td>STRIDE covers Spoofing</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a7</td><td>STRIDE covers Elevation of Privilege</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a8</td><td>traceability_matrix present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a9</td><td>requirements_register present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a10</td><td>Accessibility NFR (WCAG) captured</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a11</td><td>Summary table present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a12</td><td><strong>ASPICE:</strong> verification_criterion field present <span class="aspice-tag">SWE.1 BP3</span></td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a13</td><td><strong>ASPICE:</strong> WP 13-52 elicitation record label <span class="aspice-tag">WP 13-52</span></td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a14</td><td><strong>ASPICE:</strong> requirement status "proposed" <span class="aspice-tag">SYS.1 BP4</span></td><td class="pass">✓</td><td class="fail">✗</td></tr>
+    </tbody>
+  </table>
+  <div class="footnote">With skill: 14/14 (100%) · Without skill: 2/14 (14.3%)</div>
+</div>
+
+<!-- iot-pipeline -->
+<div class="eval-section">
+  <h2>iot-pipeline <span class="eval-badge">12 assertions</span></h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Assertion</th><th>With Skill</th><th>Without Skill</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>a1</td><td>Phase 1 present (Clarification Questions)</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a2</td><td>Security questions present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a3</td><td>JSON spec produced (spec_version)</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a4</td><td>ML anomaly detection in not_included</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a5</td><td>Anomaly/ML scoped out</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a6</td><td>Real-time/timing NFR captured</td><td class="pass">✓</td><td class="pass">✓</td></tr>
+      <tr><td>a7</td><td>STRIDE threat model present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a8</td><td>traceability_matrix present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a9</td><td>requirements_register present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a10</td><td>Summary table present</td><td class="pass">✓</td><td class="pass">✓</td></tr>
+      <tr><td>a11</td><td><strong>ASPICE:</strong> verification_criterion field present <span class="aspice-tag">SWE.1 BP3</span></td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a12</td><td><strong>ASPICE:</strong> WP 13-52 elicitation record label <span class="aspice-tag">WP 13-52</span></td><td class="pass">✓</td><td class="fail">✗</td></tr>
+    </tbody>
+  </table>
+  <div class="footnote">With skill: 12/12 (100%) · Without skill: 2/12 (16.7%)</div>
+</div>
+
+<!-- restaurant-ordering -->
+<div class="eval-section">
+  <h2>restaurant-ordering <span class="eval-badge">16 assertions · DDD + i18n + ASPICE</span></h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Assertion</th><th>With Skill</th><th>Without Skill</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>a1</td><td>Phase 1 present (Clarification Questions)</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a2</td><td>Security questions present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a3</td><td>Localization questions (Spanish mentioned)</td><td class="pass">✓</td><td class="pass">✓</td></tr>
+      <tr><td>a4</td><td>Accessibility questions asked</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a5</td><td>DDD / bounded context questions asked</td><td class="pass">✓</td><td class="pass">✓</td></tr>
+      <tr><td>a6</td><td>JSON spec produced (spec_version)</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a7</td><td>Localization NFR present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a8</td><td>Accessibility NFR present (WCAG)</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a9</td><td>Bounded contexts in technical approach</td><td class="pass">✓</td><td class="pass">✓</td></tr>
+      <tr><td>a10</td><td>Ubiquitous language / domain glossary present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a11</td><td>Domain events documented</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a12</td><td>traceability_matrix present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a13</td><td>Summary table present</td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a14</td><td><strong>ASPICE:</strong> verification_criterion field present <span class="aspice-tag">SWE.1 BP3</span></td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a15</td><td><strong>ASPICE:</strong> WP 13-52 elicitation record label <span class="aspice-tag">WP 13-52</span></td><td class="pass">✓</td><td class="fail">✗</td></tr>
+      <tr><td>a16</td><td><strong>ASPICE:</strong> requirement status "proposed" <span class="aspice-tag">SYS.1 BP4</span></td><td class="pass">✓</td><td class="fail">✗</td></tr>
+    </tbody>
+  </table>
+  <div class="footnote">With skill: 16/16 (100%) · Without skill: 4/16 (25.0%)</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ── ASPICE coverage summary ── -->
+<div class="history-label">ASPICE PAM 4.0 coverage — what each new field satisfies</div>
+<table style="margin-bottom:28px;">
+  <thead>
+    <tr><th>ASPICE BP</th><th>Requirement</th><th>Skill artifact</th><th>Verified in eval</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>SYS.1 BP1</td><td>Obtain stakeholder expectations</td><td>Phase 1 Q&amp;A, <code>stakeholder_register</code></td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SYS.1 BP2</td><td>Understand &amp; resolve ambiguous requirements</td><td><code>open_questions</code> with <code>blocking: true</code></td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SYS.1 BP3</td><td>Agree on requirements</td><td><code>review_required: true</code> on stakeholders</td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SYS.1 BP4</td><td>Communicate requirements status</td><td><code>"status": "proposed"</code> on every requirement (WP 17-54)</td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SYS.2 BP1</td><td>Specify system requirements</td><td><code>requirements_register</code> with id, source_text, type, criticality</td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SYS.2 BP2</td><td>Structure requirements</td><td>Epics → Stories hierarchy, <code>nfrs</code> separate array</td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SYS.2 BP3</td><td>Analyse requirements (quality check)</td><td>Phase 2 Step 4 quality gate; <code>open_questions</code> for failures</td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SYS.2 BP4</td><td>Analyse operating environment</td><td><code>constraints</code>, <code>assumptions</code>, integration NFRs</td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SYS.2 BP5</td><td>Bidirectional traceability</td><td><code>traceability_matrix</code>, <code>coverage_gaps: []</code></td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SWE.1 BP1</td><td>Specify software requirements (func + non-func)</td><td>Stories (functional) + <code>nfrs</code> array (non-functional)</td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SWE.1 BP2</td><td>Structure software requirements</td><td>Epics → Stories → Tasks with cross-references</td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SWE.1 BP3</td><td>Define verification criteria per requirement</td><td><code>"verification_criterion"</code> on every requirements_register entry</td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SWE.1 BP4</td><td>Analyse operating environment</td><td>NFRs for performance, resource, timing; <code>infra</code>-type Tasks</td><td class="pass">✓ all evals</td></tr>
+    <tr><td>SWE.1 BP5</td><td>Bidirectional traceability (system↔software)</td><td><code>source_refs</code> on Stories, <code>implemented_by</code> on requirements</td><td class="pass">✓ all evals</td></tr>
+    <tr><td>WP 13-52</td><td>Communications Evidence</td><td>Phase 1 heading: "Requirements Elicitation Record (ASPICE WP 13-52)"</td><td class="pass">✓ all evals</td></tr>
+  </tbody>
+</table>
+
+<p class="footnote">Generated March 2026 · Software Planner skill v3 (ASPICE edition) · Evaluation methodology: string-presence assertions on skill vs. no-skill agent outputs.</p>
+
+</body>
+</html>
