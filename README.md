@@ -2,18 +2,16 @@
 
 A curated collection of specification documents that define the operating behavior, coding standards, and definition of done for AI-powered software development agents. These documents are designed to be used as system-level instructions (custom agent modes, skills, or rules) in AI coding assistants and similar tools.
 
-## Todos
-- add Planner agent skills
-- add Evaluator agent skills
-
 ## Documents
 
-### Core
+### Core Programming
 
 | Document | Version | Description |
 |---|---|---|
 | [Programming Agent Skills (Generalist)](Programming-Generalist-Agent-Skills.md) | 1.2 | **Parent document.** Language-agnostic operating principles, coding standards, and definition of done for an AI programming agent targeting C/C++, Python, Swift, JavaScript/TypeScript, Go, and Rust. All language-specific documents inherit from this one. |
 | [Planning Agent Skills](Planning-Agent-Skills.md) | 1.5 | Requirements analysis and specification agent. Decomposes requirements into a three-level hierarchy (Epics, Stories, Tasks), produces validated JSON specifications, performs STRIDE threat modeling, captures NFRs, and builds a traceable risk register. |
+| [Evaluator Agent Skills](Evaluator-Agent-Skills.md) | — | Evaluation and benchmarking agent. Defines KPIs, scoring rubrics, and structured evaluation workflows for assessing AI agent outputs. |
+| [Tech Doc Writer Agent Skills](Tech-Doc-Writer-Agent-Skills.md) | 1.2 | Technical documentation agent. Produces API reference docs, READMEs, runbooks, architecture guides, and onboarding docs from source code or verbal descriptions. Outputs as Markdown, HTML, PDF, or Word Doc. |
 
 ### Language- and Domain-Specific
 
@@ -25,11 +23,23 @@ A curated collection of specification documents that define the operating behavi
 | [Programming — Swift](Programming-Swift-Agent-Skills.md) | 1.1 | Swift on Apple platforms (iOS, iPadOS, macOS, tvOS, watchOS, visionOS). Covers SwiftUI, Approachable Concurrency (Swift 6.2), Swift Testing, SwiftLint, and HIG compliance. |
 | [Swift HMI / UIControl Guidelines](Swift-HMI-UIContols-Guidelines.md) | — | Guidance for developing custom `UIControl`-based components in UIKit. Covers color management, control states, accessibility (VoiceOver, Dynamic Type, Reduce Motion), Dark Mode, Liquid Glass, pointer interactions, RTL layout, and SF Symbols. |
 
+### Claude Skills (`claude-skills/`)
+
+Installable skill packages for Claude (Cowork and Claude Code). Each skill folder contains a `SKILL.md` with normative operating instructions and a `references/` folder for supplementary content.
+
+| Skill | Description |
+|---|---|
+| [evaluator-agent](claude-skills/evaluator-agent/) | Evaluation and benchmarking agent. Defines KPIs, scoring methodology, and structured evaluation workflows. |
+| [software-planner](claude-skills/software-planner/) | Requirements analysis and planning agent. Produces JSON specifications with Epics, Stories, Tasks, STRIDE threat model, NFR register, and risk register. |
+| [tech-doc-agent](claude-skills/tech-doc-agent/) | Technical documentation agent. Produces API reference docs, READMEs, runbooks, architecture guides, and onboarding docs. Supports Markdown, HTML, PDF, and Word Doc output. |
+
 ## Document Hierarchy
 
 ```
 Programming Agent Skills (Generalist) v1.2       ← base document
 ├── Planning Agent Skills v1.5                    ← requirements & specification
+├── Evaluator Agent Skills                        ← evaluation & benchmarking
+├── Tech Doc Writer Agent Skills v1.2             ← technical documentation
 ├── Programming — Python v1.2                     ← extends generalist for Python
 ├── Programming — C and C++ v1.1                  ← extends generalist for C/C++
 ├── Programming — Full-Stack Web v1.1             ← extends generalist for web
@@ -53,6 +63,7 @@ All documents share these foundational principles:
 
 These documents can be used as:
 
+- **Claude Skills** — install the `.skill` packages from `claude-skills/` directly into Claude (Cowork or Claude Code).
 - **Cursor Rules** — place in `.cursor/rules/` or reference as agent skills.
 - **GitHub Copilot Custom Instructions** — use as custom agent mode definitions.
 - **System Prompts** — embed in any LLM-based coding assistant's system prompt or instruction set.
